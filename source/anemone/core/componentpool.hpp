@@ -21,7 +21,7 @@ class ComponentPool : public IComponentPool
 public:
 	void InsertData(Entity entity, T component)
 	{
-		check_assert(mapper.Fetch(entity) == std::nullopt,"Component added to the same entity more than once");
+		check_assert(mapper.Fetch(entity) == std::numeric_limits<Entity>::max(),"Component added to the same entity more than once");
 
 		size_t newIndex = mSize;
 		mapper.Insert(entity, newIndex);
@@ -51,7 +51,7 @@ public:
 
 	void EntityDestroyed(Entity entity) override
 	{
-		if (mapper.Fetch(entity) != std::nullopt)
+		if (mapper.Fetch(entity) != std::numeric_limits<Entity>::max())
 		{
 			RemoveData(entity);
 		}

@@ -8,7 +8,7 @@
 class ECIMapper
 {
 public:
-	std::optional<Entity> Fetch(Entity entity)
+	Entity Fetch(Entity entity)
 	{
 		for (int i = 0; i < eciMapperList.size(); i++)
 		{
@@ -17,7 +17,7 @@ public:
 				return eciMapperList[i].entity;
 			}
 		}
-		return std::nullopt;
+		return std::numeric_limits<Entity>::max();
 	}
 
 	void Insert(Entity entity, uint8_t componentIndex)

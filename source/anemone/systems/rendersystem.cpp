@@ -34,27 +34,12 @@ void RenderSystem::Render()
 
         SDL_Rect srcRect = sprite.sourceRect;
 
-        if(srcRect.w == 0 && srcRect.h == 0)
-        {
-            Logger::Log("srcRect.w == 0 && srcRect.h == 0");
-            SDL_QueryTexture(gResourceHandler->GetTexture(sprite.assetId), NULL, NULL, &srcRect.w, &srcRect.h);
-        }
-
-        auto spriteWidth = sprite.width;
-        auto spriteHeight = sprite.height;
-
-        if(spriteWidth == 0 && spriteHeight == 0)
-        {
-            spriteWidth = srcRect.w;
-            spriteHeight = srcRect.h;
-        }
-
         SDL_Rect dstRect = 
         {
             static_cast<int>(transform.Position.x), 
             static_cast<int>(transform.Position.y), 
-            static_cast<int>(spriteWidth * transform.Scale.x), 
-            static_cast<int>(spriteHeight * transform.Scale.y) 
+            static_cast<int>(sprite.width * transform.Scale.x), 
+            static_cast<int>(sprite.height * transform.Scale.y) 
         };
 
         SDL_RenderCopyEx(gWindow->GetRenderer(), gResourceHandler->GetTexture(sprite.assetId), &srcRect, &dstRect, transform.Rotation, NULL, SDL_FLIP_NONE);

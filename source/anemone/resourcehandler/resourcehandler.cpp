@@ -5,11 +5,7 @@
 
 extern std::unique_ptr<Window> gWindow;
 
-ResourceHandler::ResourceHandler() {
-    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-        std::cerr << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
-    }
-}
+ResourceHandler::ResourceHandler() {}
 
 ResourceHandler::~ResourceHandler() {
     ClearResources();

@@ -11,6 +11,7 @@
 #include <anemone/components/spritecomponent.hpp>
 #include <anemone/systems/movementsystem.hpp>
 #include <anemone/systems/rendersystem.hpp>
+#include <anemone/systems/collisionsystem.hpp>
 #include <anemone/logger/logger.hpp>
 #include <anemone/window/window.hpp>
 #include <iostream>
