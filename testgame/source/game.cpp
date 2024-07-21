@@ -13,9 +13,13 @@ Game::~Game() {}
 bool Game::Initialize() {
 	
     gCoreHandler = std::make_unique<CoreHandler>();
+
     gWindow = std::make_unique<Window>();
+
     gResourceHandler = std::make_unique<ResourceHandler>();
+
     gCoreHandler->Init();
+
     isRunning = gWindow->CreateWindow("my game", 800, 600);
 
     if (!isRunning) {
@@ -35,17 +39,17 @@ bool Game::Initialize() {
     renderSystem = gCoreHandler->CreateSystem<RenderSystem>();
     collisionSystem = gCoreHandler->CreateSystem<CollisionSystem>();
 
-    Entity car = gCoreHandler->CreateEntity();
-    gCoreHandler->AddComponent(car, TransformComponent{ glm::vec2{10, 30}, glm::vec2{2, 2}, 0.0 });
-    gCoreHandler->AddComponent(car, RigidBodyComponent{ glm::vec2{40, 0.0} });
-    gCoreHandler->AddComponent(car, SpriteComponent{"tank_image", 32, 32});
-    gCoreHandler->AddComponent(car, BoxColliderComponent{32, 32, glm::vec2{0}});
+    Entity tank = gCoreHandler->CreateEntity();
+    gCoreHandler->AddComponent(tank, TransformComponent{ glm::vec2{10, 30}, glm::vec2{2, 2}, 0.0 });
+    gCoreHandler->AddComponent(tank, RigidBodyComponent{ glm::vec2{40, 0.0} });
+    gCoreHandler->AddComponent(tank, SpriteComponent{"tank_image", 32, 32});
+    gCoreHandler->AddComponent(tank, BoxColliderComponent{32, 32, glm::vec2{0}});
 
-    Entity boat = gCoreHandler->CreateEntity();
-    gCoreHandler->AddComponent(boat, TransformComponent{ glm::vec2{300, 30}, glm::vec2{2, 2}, 0.0 });
-    gCoreHandler->AddComponent(boat, RigidBodyComponent{ glm::vec2{-40.0, 0.0} });
-    gCoreHandler->AddComponent(boat, SpriteComponent{"truck_image", 32, 32});
-    gCoreHandler->AddComponent(boat, BoxColliderComponent{32, 32, glm::vec2{0}});
+    Entity truck = gCoreHandler->CreateEntity();
+    gCoreHandler->AddComponent(truck, TransformComponent{ glm::vec2{300, 30}, glm::vec2{2, 2}, 0.0 });
+    gCoreHandler->AddComponent(truck, RigidBodyComponent{ glm::vec2{-40.0, 0.0} });
+    gCoreHandler->AddComponent(truck, SpriteComponent{"truck_image", 32, 32});
+    gCoreHandler->AddComponent(truck, BoxColliderComponent{32, 32, glm::vec2{0}});
 
     return true;
 }
