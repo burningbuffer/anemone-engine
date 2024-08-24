@@ -1,4 +1,10 @@
 #include "movementsystem.hpp"
+#include <string>
+#include <memory>
+#include "../components/transformcomponent.hpp"
+#include "../components/rigidbodycomponent.hpp"
+#include "../core/corehandler.hpp"
+#include "../logger/logger.hpp"
 
 extern std::unique_ptr<CoreHandler> gCoreHandler;
 

@@ -1,4 +1,23 @@
 #include "game.hpp"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
+#include <glm/glm.hpp>
+#include <anemone/core/corehandler.hpp>
+#include <anemone/resourcehandler/resourcehandler.hpp>
+#include <anemone/components/transformcomponent.hpp>
+#include <anemone/components/rigidbodycomponent.hpp>
+#include <anemone/components/spritecomponent.hpp>
+#include <anemone/systems/movementsystem.hpp>
+#include <anemone/systems/rendersystem.hpp>
+#include <anemone/systems/collisionsystem.hpp>
+#include <anemone/systems/damagesystem.hpp>
+#include <anemone/logger/logger.hpp>
+#include <anemone/window/window.hpp>
+#include <anemone/eventhandler/eventhandler.hpp>
+#include <iostream>
+#include <memory>
 
 std::unique_ptr<CoreHandler> gCoreHandler;
 std::unique_ptr<Window> gWindow;
@@ -13,7 +32,8 @@ std::shared_ptr<CollisionSystem> collisionSystem;
 Game::Game() {}
 Game::~Game() {}
 
-bool Game::Initialize() {
+bool Game::Initialize() 
+{
 	
     gCoreHandler = std::make_unique<CoreHandler>();
 
@@ -27,12 +47,11 @@ bool Game::Initialize() {
 
     isRunning = gWindow->CreateWindow("my game", 800, 600);
 
-    if (!isRunning) {
+    if (!isRunning) 
+    {
         Logger::Err("Window Creation Failed");
         return false;
     }
-
-
 
     gResourceHandler->AddTexture("tank_image","resources/images/tank-panther-right.png");
     gResourceHandler->AddTexture("truck_image","resources/images/truck-ford-right.png");
@@ -62,7 +81,8 @@ bool Game::Initialize() {
     return true;
 }
 
-void Game::ProcessInput() {
+void Game::ProcessInput() 
+{
     SDL_Event sdlEvent;
     while (SDL_PollEvent(&sdlEvent)) {
         switch (sdlEvent.type) {
@@ -76,8 +96,10 @@ void Game::ProcessInput() {
     }
 }
 
-void Game::Update() {
+void Game::Update() 
+{
     int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecsPreviousFrame);
+
     if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME) {
         SDL_Delay(timeToWait);
     }
@@ -97,24 +119,28 @@ void Game::Update() {
 
     damageSystem->Update(deltaTime);
 
-    gCoreHandler->BatchRemoveEntities();
+    gCoreHandler->Update();
 }
 
-void Game::Render() {
+void Game::Render() 
+{
     gWindow->RenderClear(222, 222, 222, 255);
     renderSystem->Render();
     gWindow->RenderPresent();
 }
 
-void Game::Run() {
-    while (isRunning) {
+void Game::Run() 
+{
+    while (isRunning) 
+    {
         ProcessInput();
         Update();
         Render();
     }
 }
 
-void Game::Destroy() {
+void Game::Destroy() 
+{
     gWindow->DestroyWindow();
     gResourceHandler->ClearResources();
 }

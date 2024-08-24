@@ -80,7 +80,7 @@ public:
 	{
 		return mComponentHandler->GetComponent<T>(entity);
 	}
-	
+
 	template<typename T>
 	ComponentType GetComponentType()
 	{
@@ -154,6 +154,11 @@ public:
 	void addToRemoveEntity(Entity entity)
 	{
 		entitiesToRemove.insert(entity);
+	}
+
+	void Update()
+	{
+		BatchRemoveEntities();
 	}
 
 private:

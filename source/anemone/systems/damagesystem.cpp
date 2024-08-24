@@ -1,4 +1,12 @@
 #include "damagesystem.hpp"
+#include <string>
+#include <memory>
+#include "../components/transformcomponent.hpp"
+#include "../components/rigidbodycomponent.hpp"
+#include "../components/boxcollidercomponent.hpp"
+#include "../components/spritecomponent.hpp"
+#include "../core/corehandler.hpp"
+#include "../logger/logger.hpp"
 
 extern std::unique_ptr<CoreHandler> gCoreHandler;
 extern std::unique_ptr<EventHandler> gEventHandler;

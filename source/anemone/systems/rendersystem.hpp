@@ -1,9 +1,6 @@
 #pragma once
-#include <string>
-#include <memory>
 #include "../core/system.hpp"
-#include "../core/corehandler.hpp"
-#include "../logger/logger.hpp"
+
 
 class RenderSystem : public System 
 {

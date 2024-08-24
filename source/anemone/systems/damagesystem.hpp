@@ -1,15 +1,8 @@
 #pragma once
-#include <string>
-#include <memory>
 #include "../core/system.hpp"
-#include "../components/transformcomponent.hpp"
-#include "../components/rigidbodycomponent.hpp"
-#include "../components/boxcollidercomponent.hpp"
-#include "../components/spritecomponent.hpp"
-#include "../core/corehandler.hpp"
-#include "../logger/logger.hpp"
-#include "../events/collisionevent.hpp"
 #include "../eventhandler/eventhandler.hpp"
+#include "../events/collisionevent.hpp"
+
 
 class DamageSystem : public System
 {

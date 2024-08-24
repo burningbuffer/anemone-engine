@@ -3,6 +3,10 @@
 #include "../components/spritecomponent.hpp"
 #include "../window/window.hpp"
 #include "../resourcehandler/resourcehandler.hpp"
+#include <string>
+#include <memory>
+#include "../core/corehandler.hpp"
+#include "../logger/logger.hpp"
 #include <SDL2/SDL.h>
 
 extern std::unique_ptr<CoreHandler> gCoreHandler;
