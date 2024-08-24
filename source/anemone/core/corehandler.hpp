@@ -2,6 +2,7 @@
 #include <array>
 #include <queue>
 #include <memory>
+#include <set>
 #include "../utils/common.hpp"
 #include "componenthandler.hpp"
 #include "systemhandler.hpp"
@@ -41,7 +42,7 @@ public:
 
 	void DestroyEntity(Entity entity)
 	{
-		check_assert(entity < MAX_ENTITIES, "Entity nont existent ! ");
+		check_assert(entity < MAX_ENTITIES, "Entity non existent ! ");
 		
 		signatureList[entity].reset();
 		AvailableEntities.push(entity);
@@ -56,7 +57,7 @@ public:
 
 	void setSignature(Entity entity, Signature signature)
 	{
-		check_assert(entity < MAX_ENTITIES, "Entity nont existent ! ");
+		check_assert(entity < MAX_ENTITIES, "Entity non existent ! ");
 
 		signatureList[entity] = signature;
 	}
@@ -79,7 +80,7 @@ public:
 	{
 		return mComponentHandler->GetComponent<T>(entity);
 	}
-
+	
 	template<typename T>
 	ComponentType GetComponentType()
 	{
@@ -140,7 +141,24 @@ public:
 		Logger::Log("Number of systems is " + std::to_string(mSystemHandler->NumberOfSystems()));
 	}
 
+	void BatchRemoveEntities()
+	{
+		for(auto entt : entitiesToRemove)
+		{
+			DestroyEntity(entt);
+		}
+
+		entitiesToRemove.clear();
+	}
+
+	void addToRemoveEntity(Entity entity)
+	{
+		entitiesToRemove.insert(entity);
+	}
+
 private:
+
+	std::set<Entity> entitiesToRemove;
 
 	std::unique_ptr<ComponentHandler> mComponentHandler;
 	std::unique_ptr<SystemHandler> mSystemHandler;

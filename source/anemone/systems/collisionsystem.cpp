@@ -1,6 +1,7 @@
 #include "collisionsystem.hpp"
 
 extern std::unique_ptr<CoreHandler> gCoreHandler;
+extern std::unique_ptr<EventHandler> gEventHandler;
 
 CollisionSystem::CollisionSystem()
 {
@@ -37,6 +38,7 @@ void CollisionSystem::Update(float DeltaTime)
 				if(collision)
 				{
 					Logger::Log("Collision Happening !");
+					gEventHandler->TriggerEvent<CollisionEvent>(a, b);
 				} 
 			}
             

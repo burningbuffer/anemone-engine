@@ -3,7 +3,10 @@
 std::unique_ptr<CoreHandler> gCoreHandler;
 std::unique_ptr<Window> gWindow;
 std::unique_ptr<ResourceHandler> gResourceHandler;
+std::unique_ptr<EventHandler> gEventHandler;
+
 std::shared_ptr<MovementSystem> movementSystem;
+std::shared_ptr<DamageSystem> damageSystem;
 std::shared_ptr<RenderSystem> renderSystem;
 std::shared_ptr<CollisionSystem> collisionSystem;
 
@@ -18,6 +21,8 @@ bool Game::Initialize() {
 
     gResourceHandler = std::make_unique<ResourceHandler>();
 
+    gEventHandler = std::make_unique<EventHandler>();
+
     gCoreHandler->Init();
 
     isRunning = gWindow->CreateWindow("my game", 800, 600);
@@ -26,6 +31,8 @@ bool Game::Initialize() {
         Logger::Err("Window Creation Failed");
         return false;
     }
+
+
 
     gResourceHandler->AddTexture("tank_image","resources/images/tank-panther-right.png");
     gResourceHandler->AddTexture("truck_image","resources/images/truck-ford-right.png");
@@ -38,6 +45,7 @@ bool Game::Initialize() {
     movementSystem = gCoreHandler->CreateSystem<MovementSystem>();
     renderSystem = gCoreHandler->CreateSystem<RenderSystem>();
     collisionSystem = gCoreHandler->CreateSystem<CollisionSystem>();
+    damageSystem = gCoreHandler->CreateSystem<DamageSystem>();
 
     Entity tank = gCoreHandler->CreateEntity();
     gCoreHandler->AddComponent(tank, TransformComponent{ glm::vec2{10, 30}, glm::vec2{2, 2}, 0.0 });
@@ -77,7 +85,19 @@ void Game::Update() {
     float deltaTime = (SDL_GetTicks() - millisecsPreviousFrame) / 1000.0;
     millisecsPreviousFrame = SDL_GetTicks();
 
-    gCoreHandler->UpdateSystems(deltaTime);
+    gEventHandler->Clear();
+
+    damageSystem->Subscribe();
+
+    movementSystem->Update(deltaTime);
+
+    renderSystem->Update(deltaTime);
+
+    collisionSystem->Update(deltaTime);
+
+    damageSystem->Update(deltaTime);
+
+    gCoreHandler->BatchRemoveEntities();
 }
 
 void Game::Render() {
