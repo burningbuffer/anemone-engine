@@ -25,14 +25,14 @@ private:
 
     typedef void (TBase::*CallbackFunction)(TEvent&);
 
-    TBase* baseClass;
-
-    CallbackFunction callbackFunction;
-
     virtual void Call(Event& e) override 
     {
         std::invoke(callbackFunction, baseClass, static_cast<TEvent&>(e));
     }
+
+    TBase* baseClass;
+
+    CallbackFunction callbackFunction;
 
 public:
 

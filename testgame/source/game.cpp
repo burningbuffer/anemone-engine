@@ -6,9 +6,7 @@
 #include <glm/glm.hpp>
 #include <anemone/core/corehandler.hpp>
 #include <anemone/resourcehandler/resourcehandler.hpp>
-#include <anemone/components/transformcomponent.hpp>
-#include <anemone/components/rigidbodycomponent.hpp>
-#include <anemone/components/spritecomponent.hpp>
+#include <anemone/components/components.hpp>
 #include <anemone/systems/movementsystem.hpp>
 #include <anemone/systems/rendersystem.hpp>
 #include <anemone/systems/collisionsystem.hpp>
@@ -16,6 +14,8 @@
 #include <anemone/logger/logger.hpp>
 #include <anemone/window/window.hpp>
 #include <anemone/eventhandler/eventhandler.hpp>
+#include <anemone/events/keypressedevent.hpp>
+#include <anemone/events/keyreleasedevent.hpp>
 #include <iostream>
 #include <memory>
 
@@ -60,6 +60,7 @@ bool Game::Initialize()
     gCoreHandler->CreateComponent<RigidBodyComponent>();
     gCoreHandler->CreateComponent<SpriteComponent>();
     gCoreHandler->CreateComponent<BoxColliderComponent>();
+    gCoreHandler->CreateComponent<PlayerControllerComponent>();
 
     movementSystem = gCoreHandler->CreateSystem<MovementSystem>();
     renderSystem = gCoreHandler->CreateSystem<RenderSystem>();
@@ -68,13 +69,14 @@ bool Game::Initialize()
 
     Entity tank = gCoreHandler->CreateEntity();
     gCoreHandler->AddComponent(tank, TransformComponent{ glm::vec2{10, 30}, glm::vec2{2, 2}, 0.0 });
-    gCoreHandler->AddComponent(tank, RigidBodyComponent{ glm::vec2{40, 0.0} });
+    gCoreHandler->AddComponent(tank, RigidBodyComponent{ glm::vec2{100.0, 100.0} });
     gCoreHandler->AddComponent(tank, SpriteComponent{"tank_image", 32, 32});
     gCoreHandler->AddComponent(tank, BoxColliderComponent{32, 32, glm::vec2{0}});
+    gCoreHandler->AddComponent(tank, PlayerControllerComponent{});
 
     Entity truck = gCoreHandler->CreateEntity();
     gCoreHandler->AddComponent(truck, TransformComponent{ glm::vec2{300, 30}, glm::vec2{2, 2}, 0.0 });
-    gCoreHandler->AddComponent(truck, RigidBodyComponent{ glm::vec2{-40.0, 0.0} });
+    gCoreHandler->AddComponent(truck, RigidBodyComponent{ glm::vec2{100.0, 100.0} });
     gCoreHandler->AddComponent(truck, SpriteComponent{"truck_image", 32, 32});
     gCoreHandler->AddComponent(truck, BoxColliderComponent{32, 32, glm::vec2{0}});
 
@@ -91,7 +93,10 @@ void Game::ProcessInput()
                 break;
             case SDL_KEYDOWN:
                 if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) isRunning = false;
+                gEventHandler->TriggerEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym);
                 break;
+            case SDL_KEYUP:
+                gEventHandler->TriggerEvent<KeyReleasedEvent>(sdlEvent.key.keysym.sym);
         }
     }
 }
@@ -109,7 +114,13 @@ void Game::Update()
 
     gEventHandler->Clear();
 
+    // Subscribe Systems
+
     damageSystem->Subscribe();
+
+    movementSystem->Subscribe();
+
+    // Update Systems
 
     movementSystem->Update(deltaTime);
 
@@ -118,6 +129,8 @@ void Game::Update()
     collisionSystem->Update(deltaTime);
 
     damageSystem->Update(deltaTime);
+
+    // Update Objects
 
     gCoreHandler->Update();
 }

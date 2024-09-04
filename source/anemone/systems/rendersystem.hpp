@@ -1,7 +1,6 @@
 #pragma once
 #include "../core/system.hpp"
 
-
 class RenderSystem : public System 
 {
 public:

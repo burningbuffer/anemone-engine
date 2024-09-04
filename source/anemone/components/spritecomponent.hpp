@@ -4,17 +4,17 @@
 
 struct SpriteComponent
 {
-    std::string assetId;
-    SDL_Rect sourceRect;
-    int width;
-    int height;
-
-    SpriteComponent(std::string assetId = "", int width = 32, int height = 32)
+    SpriteComponent(std::string textureId = "", int width = 32, int height = 32)
     {
-        this->assetId = assetId;
+        this->textureId = textureId;
         this->width = width;
         this->height = height;
         this->sourceRect = {0, 0, width, height};
     }
+
+    std::string textureId;
+    SDL_Rect sourceRect;
+    int width;
+    int height;
 
 };

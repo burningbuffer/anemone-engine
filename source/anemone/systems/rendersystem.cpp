@@ -46,7 +46,7 @@ void RenderSystem::Render()
             static_cast<int>(sprite.height * transform.Scale.y) 
         };
 
-        SDL_RenderCopyEx(gWindow->GetRenderer(), gResourceHandler->GetTexture(sprite.assetId), &srcRect, &dstRect, transform.Rotation, NULL, SDL_FLIP_NONE);
+        SDL_RenderCopyEx(gWindow->GetRenderer(), gResourceHandler->GetTexture(sprite.textureId), &srcRect, &dstRect, transform.Rotation, NULL, SDL_FLIP_NONE);
         
 	}
 }

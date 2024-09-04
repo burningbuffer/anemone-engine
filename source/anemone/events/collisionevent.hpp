@@ -6,12 +6,12 @@
 class CollisionEvent : public Event 
 {
 public:
-    Entity a;
-    Entity b;
     CollisionEvent(Entity a, Entity b)
     {
         this->a = a;
         this->b = b;
     }
 
+    Entity a;
+    Entity b;
 };

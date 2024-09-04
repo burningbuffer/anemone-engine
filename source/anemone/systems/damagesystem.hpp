@@ -3,7 +3,6 @@
 #include "../eventhandler/eventhandler.hpp"
 #include "../events/collisionevent.hpp"
 
-
 class DamageSystem : public System
 {
 public:
