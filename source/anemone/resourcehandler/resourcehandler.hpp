@@ -6,15 +6,16 @@
 #include <string>
 #include <unordered_map>
 
-class ResourceHandler {
+class ResourceHandler 
+{
 public:
     ResourceHandler();
     ~ResourceHandler();
 
     void PrintTextures();
     void ClearResources();
-    void AddTexture(const std::string& assetId, const std::string& filePath);
-    SDL_Texture* GetTexture(const std::string& assetId);
+    void AddTexture(const std::string& textureId, const std::string& filePath);
+    SDL_Texture* GetTexture(const std::string& textureId);
 
 private:
     std::unordered_map<std::string, SDL_Texture*> mTextures;

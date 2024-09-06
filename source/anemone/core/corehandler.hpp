@@ -22,18 +22,18 @@ public:
 	{
 		for (Entity entity = 0; entity < MAX_ENTITIES; ++entity)
 		{
-			AvailableEntities.push(entity);
+			mAvailableEntities.push(entity);
 		}
 	}
 
 	Entity CreateEntity()
 	{
 
-		check_assert(EntityActiveCount < MAX_ENTITIES, "Too Many entities ! ");
+		check_assert(mEntityActiveCount < MAX_ENTITIES, "Too Many entities ! ");
 	
-		Entity id = AvailableEntities.front();
-		AvailableEntities.pop();
-		++EntityActiveCount;
+		Entity id = mAvailableEntities.front();
+		mAvailableEntities.pop();
+		++mEntityActiveCount;
 
 		Logger::Log("Entity Created ! ");
 
@@ -44,9 +44,9 @@ public:
 	{
 		check_assert(entity < MAX_ENTITIES, "Entity non existent ! ");
 		
-		signatureList[entity].reset();
-		AvailableEntities.push(entity);
-		--EntityActiveCount;
+		mSignatureList[entity].reset();
+		mAvailableEntities.push(entity);
+		--mEntityActiveCount;
 
 		mComponentHandler->EntityDestroyed(entity);
 
@@ -59,14 +59,14 @@ public:
 	{
 		check_assert(entity < MAX_ENTITIES, "Entity non existent ! ");
 
-		signatureList[entity] = signature;
+		mSignatureList[entity] = signature;
 	}
 
 	Signature GetSignature(Entity entity)
 	{
 		check_assert(entity < MAX_ENTITIES, "Entity nont existent ! ");
 
-		return signatureList[entity];
+		return mSignatureList[entity];
 	}
 
 	template<typename T>
@@ -143,17 +143,17 @@ public:
 
 	void BatchRemoveEntities()
 	{
-		for(auto entt : entitiesToRemove)
+		for(auto entt : mEntitiesToRemove)
 		{
 			DestroyEntity(entt);
 		}
 
-		entitiesToRemove.clear();
+		mEntitiesToRemove.clear();
 	}
 
 	void addToRemoveEntity(Entity entity)
 	{
-		entitiesToRemove.insert(entity);
+		mEntitiesToRemove.insert(entity);
 	}
 
 	void Update()
@@ -163,12 +163,12 @@ public:
 
 private:
 
-	std::set<Entity> entitiesToRemove;
+	std::set<Entity> mEntitiesToRemove;
 
 	std::unique_ptr<ComponentHandler> mComponentHandler;
 	std::unique_ptr<SystemHandler> mSystemHandler;
 
-	std::queue<Entity> AvailableEntities;
-	std::array<Signature, MAX_ENTITIES> signatureList{};
-	uint32_t EntityActiveCount{};
+	std::queue<Entity> mAvailableEntities;
+	std::array<Signature, MAX_ENTITIES> mSignatureList{};
+	uint32_t mEntityActiveCount{};
 };

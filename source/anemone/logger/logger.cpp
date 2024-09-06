@@ -4,7 +4,7 @@
 #include <ctime>
 #include "logger.hpp"
 
-std::vector<LogEntry> Logger::messages;
+std::vector<LogEntry> Logger::mMessages;
 
 std::string CurrentDateTimeToString()
 {
@@ -20,7 +20,7 @@ void Logger::Log(const std::string& message)
 	logEntry.type = LOG_INFO;
 	logEntry.message = "LOG: [" + CurrentDateTimeToString() + "]: " + message;
 	std::cout << "\x1B[32m" << logEntry.message << "\033[0m" << std::endl;
-	messages.push_back(logEntry);
+	mMessages.push_back(logEntry);
 }
 
 void Logger::Err(const std::string& message)
@@ -29,6 +29,6 @@ void Logger::Err(const std::string& message)
 	logEntry.type = LOG_ERROR;
 	logEntry.message = "ERROR: [" + CurrentDateTimeToString() + "]: " + message;
 	std::cout << "\x1B[91m" << logEntry.message << "\033[0m" << std::endl;
-	messages.push_back(logEntry);
+	mMessages.push_back(logEntry);
 
 }

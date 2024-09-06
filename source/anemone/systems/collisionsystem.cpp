@@ -25,15 +25,13 @@ void CollisionSystem::Update(float DeltaTime)
 				auto& b_transform = gCoreHandler->GetComponent<TransformComponent>(b);
 				auto& b_boxcollider = gCoreHandler->GetComponent<BoxColliderComponent>(b);
 
-				bool collision = CheckAABBCollision(
-									a_transform.Position.x,
-									a_transform.Position.y,
-									a_boxcollider.width,
-									a_boxcollider.height,
-									b_transform.Position.x,
-									b_transform.Position.y,
-									b_boxcollider.width,
-									b_boxcollider.height);
+				bool collision = CheckAABBCollision
+				(
+					a_transform.Position.x + a_boxcollider.offset.x, a_transform.Position.y + a_boxcollider.offset.y,
+					a_boxcollider.width * a_transform.Scale.x, a_boxcollider.height * a_transform.Scale.y,
+					b_transform.Position.x + b_boxcollider.offset.x, b_transform.Position.y + b_boxcollider.offset.y,
+					b_boxcollider.width * b_transform.Scale.x, b_boxcollider.height	* b_transform.Scale.y 					
+				);
 
 				if(collision)
 				{

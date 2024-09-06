@@ -64,9 +64,6 @@ public:
 	}
 
 private:
-	std::unordered_map<const char*, ComponentType> mComponentTypes{};
-	std::unordered_map<const char*, std::shared_ptr<IComponentPool>> mComponentPools{};
-	ComponentType mNextComponentIndex{};
 
 	template<typename T>
 	std::shared_ptr<ComponentPool<T>> GetComponentPool()
@@ -77,4 +74,8 @@ private:
 		
 		return std::static_pointer_cast<ComponentPool<T>>(mComponentPools[typeName]);
 	}
+
+	std::unordered_map<const char*, ComponentType> mComponentTypes{};
+	std::unordered_map<const char*, std::shared_ptr<IComponentPool>> mComponentPools{};
+	ComponentType mNextComponentIndex{};
 };

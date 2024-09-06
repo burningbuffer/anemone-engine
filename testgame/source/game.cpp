@@ -11,6 +11,7 @@
 #include <anemone/systems/rendersystem.hpp>
 #include <anemone/systems/collisionsystem.hpp>
 #include <anemone/systems/damagesystem.hpp>
+#include <anemone/systems/debugrenderingsystem.hpp>
 #include <anemone/logger/logger.hpp>
 #include <anemone/window/window.hpp>
 #include <anemone/eventhandler/eventhandler.hpp>
@@ -28,6 +29,8 @@ std::shared_ptr<MovementSystem> movementSystem;
 std::shared_ptr<DamageSystem> damageSystem;
 std::shared_ptr<RenderSystem> renderSystem;
 std::shared_ptr<CollisionSystem> collisionSystem;
+
+std::shared_ptr<DebugRenderingSystem> debugRenderingSystem;
 
 Game::Game() {}
 Game::~Game() {}
@@ -66,19 +69,26 @@ bool Game::Initialize()
     renderSystem = gCoreHandler->CreateSystem<RenderSystem>();
     collisionSystem = gCoreHandler->CreateSystem<CollisionSystem>();
     damageSystem = gCoreHandler->CreateSystem<DamageSystem>();
+    debugRenderingSystem = gCoreHandler->CreateSystem<DebugRenderingSystem>();
 
     Entity tank = gCoreHandler->CreateEntity();
     gCoreHandler->AddComponent(tank, TransformComponent{ glm::vec2{10, 30}, glm::vec2{2, 2}, 0.0 });
-    gCoreHandler->AddComponent(tank, RigidBodyComponent{ glm::vec2{100.0, 100.0} });
+    gCoreHandler->AddComponent(tank, RigidBodyComponent{ glm::vec2{200.0, 200.0} });
     gCoreHandler->AddComponent(tank, SpriteComponent{"tank_image", 32, 32});
-    gCoreHandler->AddComponent(tank, BoxColliderComponent{32, 32, glm::vec2{0}});
+    gCoreHandler->AddComponent(tank, BoxColliderComponent{16, 16, glm::vec2{1}});
     gCoreHandler->AddComponent(tank, PlayerControllerComponent{});
 
     Entity truck = gCoreHandler->CreateEntity();
     gCoreHandler->AddComponent(truck, TransformComponent{ glm::vec2{300, 30}, glm::vec2{2, 2}, 0.0 });
     gCoreHandler->AddComponent(truck, RigidBodyComponent{ glm::vec2{100.0, 100.0} });
     gCoreHandler->AddComponent(truck, SpriteComponent{"truck_image", 32, 32});
-    gCoreHandler->AddComponent(truck, BoxColliderComponent{32, 32, glm::vec2{0}});
+    gCoreHandler->AddComponent(truck, BoxColliderComponent{32, 32, glm::vec2{1}});
+
+    Entity truck2 = gCoreHandler->CreateEntity();
+    gCoreHandler->AddComponent(truck2, TransformComponent{ glm::vec2{100, 130}, glm::vec2{2, 2}, 0.0 });
+    gCoreHandler->AddComponent(truck2, RigidBodyComponent{ glm::vec2{100.0, 100.0} });
+    gCoreHandler->AddComponent(truck2, SpriteComponent{"truck_image", 32, 32});
+    gCoreHandler->AddComponent(truck2, BoxColliderComponent{32, 32, glm::vec2{1}});
 
     return true;
 }
@@ -130,6 +140,8 @@ void Game::Update()
 
     damageSystem->Update(deltaTime);
 
+    debugRenderingSystem->Update(deltaTime);
+
     // Update Objects
 
     gCoreHandler->Update();
@@ -138,7 +150,11 @@ void Game::Update()
 void Game::Render() 
 {
     gWindow->RenderClear(222, 222, 222, 255);
+
     renderSystem->Render();
+
+    debugRenderingSystem->Render();
+
     gWindow->RenderPresent();
 }
 

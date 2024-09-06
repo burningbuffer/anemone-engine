@@ -22,9 +22,9 @@ public:
 	{
 		const char* typeName = typeid(T).name();
 
-		std::shared_ptr<System>& a = mSystems.find(typeName)->second;
+		std::shared_ptr<System>& s = mSystems.find(typeName)->second;
 		
-		a->mSignature = signature;
+		s->mSignature = signature;
 	}
 
 	void EntityDestroyed(Entity entity)

@@ -10,11 +10,11 @@ class ECIMapper
 public:
 	Entity Fetch(Entity entity)
 	{
-		for (int i = 0; i < eciMapperList.size(); i++)
+		for (int i = 0; i < mEciMapperList.size(); i++)
 		{
-			if (eciMapperList[i].entity == entity)
+			if (mEciMapperList[i].entity == entity)
 			{
-				return eciMapperList[i].entity;
+				return mEciMapperList[i].entity;
 			}
 		}
 		return std::numeric_limits<Entity>::max();
@@ -25,16 +25,16 @@ public:
 		Mapper m;
 		m.entity = entity;
 		m.componentIndex = componentIndex;
-		eciMapperList.push_back(m);
+		mEciMapperList.push_back(m);
 	}
 
 	void UpdateAndDelete(Entity entityToDelete)
 	{
-		for (int i = 0; i < eciMapperList.size(); i++)
+		for (int i = 0; i < mEciMapperList.size(); i++)
 		{
-			if (eciMapperList[i].entity == entityToDelete)
+			if (mEciMapperList[i].entity == entityToDelete)
 			{
-				eciMapperList.erase(eciMapperList.begin()+i);
+				mEciMapperList.erase(mEciMapperList.begin()+i);
 			}
 		}
 	}
@@ -42,11 +42,11 @@ public:
 	size_t IndexOfEntity(Entity entity)
 	{
 		
-		for (int i = 0; i < eciMapperList.size(); i++)
+		for (int i = 0; i < mEciMapperList.size(); i++)
 		{
-			if (eciMapperList[i].entity == entity)
+			if (mEciMapperList[i].entity == entity)
 			{
-				return eciMapperList[i].componentIndex;
+				return mEciMapperList[i].componentIndex;
 			}
 		}
 		return std::numeric_limits<size_t>::max();
@@ -54,13 +54,14 @@ public:
 
 	size_t TotalSize()
 	{
-		return eciMapperList.size();
+		return mEciMapperList.size();
 	}
 
 private:
-	struct Mapper {
+	struct Mapper 
+	{
 		Entity entity;
 		uint8_t componentIndex;
 	};
-	std::vector<Mapper> eciMapperList;
+	std::vector<Mapper> mEciMapperList;
 };

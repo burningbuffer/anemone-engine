@@ -21,10 +21,10 @@ class ComponentPool : public IComponentPool
 public:
 	void InsertData(Entity entity, T component)
 	{
-		check_assert(mapper.Fetch(entity) == std::numeric_limits<Entity>::max(),"Component added to the same entity more than once");
+		check_assert(mMapper.Fetch(entity) == std::numeric_limits<Entity>::max(),"Component added to the same entity more than once");
 
 		size_t newIndex = mSize;
-		mapper.Insert(entity, newIndex);
+		mMapper.Insert(entity, newIndex);
 		mComponentPool[newIndex] = component;
 		++mSize;
 
@@ -32,26 +32,26 @@ public:
 
 	void RemoveData(Entity entity)
 	{
-		check_assert(mapper.IndexOfEntity(entity) != std::numeric_limits<size_t>::max(), "Removing non existent component !");
+		check_assert(mMapper.IndexOfEntity(entity) != std::numeric_limits<size_t>::max(), "Removing non existent component !");
 
-		size_t indexOfRemovedEntity = mapper.IndexOfEntity(entity);
+		size_t indexOfRemovedEntity = mMapper.IndexOfEntity(entity);
 
 		size_t indexOfLastElement = mSize - 1;
 		mComponentPool[indexOfRemovedEntity] = mComponentPool[indexOfLastElement];
-		mapper.UpdateAndDelete(entity);
+		mMapper.UpdateAndDelete(entity);
 		--mSize;
 	}
 
 	T& GetData(Entity entity)
 	{
-		check_assert(mapper.IndexOfEntity(entity) != std::numeric_limits<size_t>::max(), "Retrieving non existent component !");
+		check_assert(mMapper.IndexOfEntity(entity) != std::numeric_limits<size_t>::max(), "Retrieving non existent component !");
 
-		return mComponentPool[mapper.IndexOfEntity(entity)];
+		return mComponentPool[mMapper.IndexOfEntity(entity)];
 	}
 
 	void EntityDestroyed(Entity entity) override
 	{
-		if (mapper.Fetch(entity) != std::numeric_limits<Entity>::max())
+		if (mMapper.Fetch(entity) != std::numeric_limits<Entity>::max())
 		{
 			RemoveData(entity);
 		}
@@ -59,6 +59,6 @@ public:
 
 private:
 	std::array<T, MAX_ENTITIES> mComponentPool{};
-	ECIMapper mapper;
+	ECIMapper mMapper;
 	size_t mSize{};
 };

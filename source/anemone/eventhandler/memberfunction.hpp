@@ -27,19 +27,19 @@ private:
 
     virtual void Call(Event& e) override 
     {
-        std::invoke(callbackFunction, baseClass, static_cast<TEvent&>(e));
+        std::invoke(mCallbackFunction, mBaseClass, static_cast<TEvent&>(e));
     }
 
-    TBase* baseClass;
+    TBase* mBaseClass;
 
-    CallbackFunction callbackFunction;
+    CallbackFunction mCallbackFunction;
 
 public:
 
     MemberFunction(TBase* baseClass, CallbackFunction callbackFunction)
     {
-        this->baseClass = baseClass;
-        this->callbackFunction = callbackFunction;
+        this->mBaseClass = baseClass;
+        this->mCallbackFunction = callbackFunction;
     }
 
     virtual ~MemberFunction() override = default;

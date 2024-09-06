@@ -14,25 +14,25 @@ public:
 
     void Clear()
     {
-        subscribers.clear();
+        mSubscribers.clear();
     }
 
     template<typename TEvent,typename TBase>
     void SubscribeToEvent(TBase* baseClass, void (TBase::*callbackFunction)(TEvent&))
     {
-        if(!subscribers[typeid(TEvent)].get())
+        if(!mSubscribers[typeid(TEvent)].get())
         {
-            subscribers[typeid(TEvent)] = std::make_unique<availableFunctionList>();
+            mSubscribers[typeid(TEvent)] = std::make_unique<availableFunctionList>();
         }
 
         auto subscriber = std::make_unique<MemberFunction<TBase, TEvent>>(baseClass, callbackFunction);
-        subscribers[typeid(TEvent)]->push_back(std::move(subscriber));
+        mSubscribers[typeid(TEvent)]->push_back(std::move(subscriber));
     }
 
     template<typename TEvent, typename ...TArgs>
     void TriggerEvent(TArgs&& ...args)
     {
-        auto handlers = subscribers[typeid(TEvent)].get();
+        auto handlers = mSubscribers[typeid(TEvent)].get();
         if (handlers) {
             for (auto it = handlers->begin(); it != handlers->end(); it++) {
                 auto handler = it->get();
@@ -43,5 +43,5 @@ public:
     }
 
 private:
-    std::map<std::type_index, std::unique_ptr<availableFunctionList>> subscribers;
+    std::map<std::type_index, std::unique_ptr<availableFunctionList>> mSubscribers;
 };
