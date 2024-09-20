@@ -54,6 +54,12 @@ public:
 		return GetComponentPool<T>()->GetData(entity);
 	}
 
+	template<typename T>
+	bool HasComponent(Entity entity)
+	{
+		return GetComponentPool<T>()->HasEntity(entity);
+	}
+
 	void EntityDestroyed(Entity entity)
 	{
 		for (auto const& pair : mComponentPools)
@@ -74,6 +80,7 @@ private:
 		
 		return std::static_pointer_cast<ComponentPool<T>>(mComponentPools[typeName]);
 	}
+
 
 	std::unordered_map<const char*, ComponentType> mComponentTypes{};
 	std::unordered_map<const char*, std::shared_ptr<IComponentPool>> mComponentPools{};

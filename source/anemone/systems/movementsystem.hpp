@@ -2,6 +2,7 @@
 #include "../core/system.hpp"
 #include "../events/keypressedevent.hpp"
 #include "../events/keyreleasedevent.hpp"
+#include <box2d/box2d.h>
 
 class MovementSystem : public System
 {
@@ -26,6 +27,11 @@ private:
 
 	bool move_x_left = false;
 	bool move_x_right = false;
+
+	float speed = 90;
+	float force = 150000;
+
+	b2Rot rot{0.0f, 0.0f};
 
 };
 

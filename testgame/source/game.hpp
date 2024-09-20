@@ -1,4 +1,6 @@
 #pragma once
+#include <anemone/utils/common.hpp>
+#include <box2d/box2d.h>
 
 class Game 
 {
@@ -10,8 +12,11 @@ public:
     void Run();
     void ProcessInput();
     void Update();
+    void UpdateBox2d();
     void Render();
     void Destroy();
+
+    void CreateBody(Entity e, b2BodyType bodyType);
 
 private:
     const int FPS = 60;

@@ -31,7 +31,7 @@ file(GLOB SOURCES
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 if(WIN32)
-    target_link_libraries(${PROJECT_NAME} SDL2 SDL2main SDL2_image SDL2_mixer SDL2_ttf)
+target_link_libraries(${PROJECT_NAME} PUBLIC box2d SDL2 SDL2main SDL2_image SDL2_mixer SDL2_ttf)
     target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/deps/includes ${CMAKE_SOURCE_DIR}/deps/includes/glm/glm)
     target_link_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/deps/libs)
 endif(WIN32)

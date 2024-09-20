@@ -3,12 +3,12 @@
 
 struct TransformComponent
 {
-	TransformComponent(glm::vec2 Position = glm::vec2(0, 0), glm::vec2 Scale = glm::vec2(1,1), double Rotation = 0.0)
+	TransformComponent(glm::vec2 Position)
 	{
 		this->Position = Position;
-		this->Scale = Scale;
-		this->Rotation = Rotation;
 	}
+
+	TransformComponent() = default;
 
 	glm::vec2 Position;
 	glm::vec2 Scale;

@@ -1,16 +1,15 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <box2d/box2d.h>
+#include "./collidercomponent.hpp"
 
-struct BoxColliderComponent
+struct BoxColliderComponent : ColliderComponent
 {
-    int width;
-    int height;
-	glm::vec2 offset;
+	BoxColliderComponent(const glm::vec2& size = glm::vec2(32.0f, 32.0f), const glm::vec2& offset = glm::vec2(0.0f)) : size(size), offset(offset) {}
 
-	BoxColliderComponent(int width = 0, int height = 0, glm::vec2 offset = glm::vec2{0})
-	{
-		this->width = width;
-        this->height = height;
-        this->offset = offset;
-	}
+	b2Polygon boxCollider;
+	b2ShapeDef shapeDef;
+
+	glm::vec2 size;
+    glm::vec2 offset;
 };

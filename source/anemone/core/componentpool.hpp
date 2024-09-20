@@ -49,6 +49,16 @@ public:
 		return mComponentPool[mMapper.IndexOfEntity(entity)];
 	}
 
+	bool HasEntity(Entity entity)
+	{
+		if(mMapper.Fetch(entity) == std::numeric_limits<Entity>::max())
+		{
+			return false;
+		}
+
+		return true;
+	}
+
 	void EntityDestroyed(Entity entity) override
 	{
 		if (mMapper.Fetch(entity) != std::numeric_limits<Entity>::max())

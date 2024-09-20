@@ -17,37 +17,43 @@
 #include <anemone/eventhandler/eventhandler.hpp>
 #include <anemone/events/keypressedevent.hpp>
 #include <anemone/events/keyreleasedevent.hpp>
+#include <anemone/physics/physicshandler.hpp>
 #include <iostream>
 #include <memory>
+#include <box2d/box2d.h>
 
 std::unique_ptr<CoreHandler> gCoreHandler;
 std::unique_ptr<Window> gWindow;
 std::unique_ptr<ResourceHandler> gResourceHandler;
 std::unique_ptr<EventHandler> gEventHandler;
+std::unique_ptr<PhysicsHandler> gPhysicsHandler;
 
 std::shared_ptr<MovementSystem> movementSystem;
 std::shared_ptr<DamageSystem> damageSystem;
 std::shared_ptr<RenderSystem> renderSystem;
-std::shared_ptr<CollisionSystem> collisionSystem;
+//std::shared_ptr<CollisionSystem> collisionSystem;
 
-std::shared_ptr<DebugRenderingSystem> debugRenderingSystem;
+//std::shared_ptr<DebugRenderingSystem> debugRenderingSystem;
+
+//b2Vec2 gGravity = {0.0f, +190.0f};
+b2Vec2 gGravity = {0.0f, 0.0f};
+
+b2WorldDef worldDef;
+
+b2WorldId gWorldId;
+float mTimeStep = 1.0f / 60.0f;
+int mSubStepCount = 8;
 
 Game::Game() {}
 Game::~Game() {}
 
 bool Game::Initialize() 
 {
-	
     gCoreHandler = std::make_unique<CoreHandler>();
-
     gWindow = std::make_unique<Window>();
-
     gResourceHandler = std::make_unique<ResourceHandler>();
-
     gEventHandler = std::make_unique<EventHandler>();
-
     gCoreHandler->Init();
-
     isRunning = gWindow->CreateWindow("my game", 800, 600);
 
     if (!isRunning) 
@@ -55,6 +61,11 @@ bool Game::Initialize()
         Logger::Err("Window Creation Failed");
         return false;
     }
+
+    worldDef = b2DefaultWorldDef();
+    worldDef.gravity = gGravity;
+
+    gWorldId = b2CreateWorld(&worldDef);
 
     gResourceHandler->AddTexture("tank_image","resources/images/tank-panther-right.png");
     gResourceHandler->AddTexture("truck_image","resources/images/truck-ford-right.png");
@@ -67,30 +78,60 @@ bool Game::Initialize()
 
     movementSystem = gCoreHandler->CreateSystem<MovementSystem>();
     renderSystem = gCoreHandler->CreateSystem<RenderSystem>();
-    collisionSystem = gCoreHandler->CreateSystem<CollisionSystem>();
+    //collisionSystem = gCoreHandler->CreateSystem<CollisionSystem>();
     damageSystem = gCoreHandler->CreateSystem<DamageSystem>();
-    debugRenderingSystem = gCoreHandler->CreateSystem<DebugRenderingSystem>();
+    //debugRenderingSystem = gCoreHandler->CreateSystem<DebugRenderingSystem>();
 
     Entity tank = gCoreHandler->CreateEntity();
-    gCoreHandler->AddComponent(tank, TransformComponent{ glm::vec2{10, 30}, glm::vec2{2, 2}, 0.0 });
-    gCoreHandler->AddComponent(tank, RigidBodyComponent{ glm::vec2{200.0, 200.0} });
+    gCoreHandler->AddComponent(tank, TransformComponent{glm::vec2{10, 30}});
+    gCoreHandler->AddComponent(tank, RigidBodyComponent{});
     gCoreHandler->AddComponent(tank, SpriteComponent{"tank_image", 32, 32});
-    gCoreHandler->AddComponent(tank, BoxColliderComponent{16, 16, glm::vec2{1}});
+    gCoreHandler->AddComponent(tank, BoxColliderComponent{glm::vec2{28, 19}, glm::vec2{5, 12}});
     gCoreHandler->AddComponent(tank, PlayerControllerComponent{});
 
-    Entity truck = gCoreHandler->CreateEntity();
-    gCoreHandler->AddComponent(truck, TransformComponent{ glm::vec2{300, 30}, glm::vec2{2, 2}, 0.0 });
-    gCoreHandler->AddComponent(truck, RigidBodyComponent{ glm::vec2{100.0, 100.0} });
-    gCoreHandler->AddComponent(truck, SpriteComponent{"truck_image", 32, 32});
-    gCoreHandler->AddComponent(truck, BoxColliderComponent{32, 32, glm::vec2{1}});
+    CreateBody(tank, b2_dynamicBody);
 
-    Entity truck2 = gCoreHandler->CreateEntity();
-    gCoreHandler->AddComponent(truck2, TransformComponent{ glm::vec2{100, 130}, glm::vec2{2, 2}, 0.0 });
-    gCoreHandler->AddComponent(truck2, RigidBodyComponent{ glm::vec2{100.0, 100.0} });
-    gCoreHandler->AddComponent(truck2, SpriteComponent{"truck_image", 32, 32});
-    gCoreHandler->AddComponent(truck2, BoxColliderComponent{32, 32, glm::vec2{1}});
+    Entity truck = gCoreHandler->CreateEntity();
+    gCoreHandler->AddComponent(truck, TransformComponent{glm::vec2{10, 160}});
+    gCoreHandler->AddComponent(truck, RigidBodyComponent{});
+    gCoreHandler->AddComponent(truck, SpriteComponent{"truck_image", 32, 32});
+    gCoreHandler->AddComponent(truck, BoxColliderComponent{glm::vec2{28, 19}, glm::vec2{5, 12}});
+
+    // CreateBody(truck, b2_staticBody);
+    CreateBody(truck, b2_staticBody);
 
     return true;
+}
+
+void Game::CreateBody(Entity e, b2BodyType bodyType)
+{
+    auto& transform = gCoreHandler->GetComponent<TransformComponent>(e);
+    auto& rigidbody = gCoreHandler->GetComponent<RigidBodyComponent>(e);
+
+    b2BodyDef bodyDef;
+    bodyDef = b2DefaultBodyDef();
+    bodyDef.type = bodyType;
+    bodyDef.position = b2Vec2{transform.Position.x, transform.Position.y};
+    bodyDef.fixedRotation = false;
+
+    rigidbody.body = b2CreateBody(gWorldId, &bodyDef);
+
+    b2Body_SetLinearDamping(rigidbody.body, 0.0f);
+
+    if(gCoreHandler->HasComponent<BoxColliderComponent>(e))
+    {
+        auto& box_collider = gCoreHandler->GetComponent<BoxColliderComponent>(e);
+    
+        box_collider.boxCollider = b2MakeBox(box_collider.size.x, box_collider.size.y); 
+
+        b2ShapeDef shapeDef = b2DefaultShapeDef();
+        shapeDef.density = 1.0f;
+        shapeDef.friction = 0.0f;// 0.3f;
+        shapeDef.restitution = 0.0;
+        b2CreatePolygonShape(rigidbody.body, &shapeDef, &box_collider.boxCollider);
+    }
+
+    Logger::Log("CreateBody");
 }
 
 void Game::ProcessInput() 
@@ -136,15 +177,22 @@ void Game::Update()
 
     renderSystem->Update(deltaTime);
 
-    collisionSystem->Update(deltaTime);
+    //collisionSystem->Update(deltaTime);
 
     damageSystem->Update(deltaTime);
 
-    debugRenderingSystem->Update(deltaTime);
+    //debugRenderingSystem->Update(deltaTime);
 
     // Update Objects
 
     gCoreHandler->Update();
+
+    UpdateBox2d();
+}
+
+void Game::UpdateBox2d()
+{
+    b2World_Step(gWorldId, mTimeStep, mSubStepCount);
 }
 
 void Game::Render() 
@@ -153,7 +201,7 @@ void Game::Render()
 
     renderSystem->Render();
 
-    debugRenderingSystem->Render();
+    //debugRenderingSystem->Render();
 
     gWindow->RenderPresent();
 }
@@ -172,4 +220,7 @@ void Game::Destroy()
 {
     gWindow->DestroyWindow();
     gResourceHandler->ClearResources();
+    b2DestroyWorld(gWorldId);
 }
+
+

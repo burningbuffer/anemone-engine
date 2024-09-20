@@ -44,6 +44,7 @@ void MovementSystem::OnKeyReleased(KeyReleasedEvent &event)
 				break;
             case SDLK_d:
 				move_x_right = false;
+
                 break;
         }
     }
@@ -79,23 +80,43 @@ void MovementSystem::Update(float DeltaTime)
 		auto& transform = gCoreHandler->GetComponent<TransformComponent>(entity);
 		auto& rigidBody = gCoreHandler->GetComponent<RigidBodyComponent>(entity);
 
+		b2Vec2 velocity = b2Body_GetLinearVelocity(rigidBody.body);
+
 		if(move_y_top == true)
 		{
-			transform.Position.y -= rigidBody.velocity.y * DeltaTime;
+			velocity.y = -speed; 
 		}
 		else if(move_y_down == true)
 		{
-			transform.Position.y += rigidBody.velocity.y * DeltaTime;
+			velocity.y = speed; 
 		}
+		else
+        { 
+           velocity.y = 0;
+        }
 		if(move_x_left == true)
 		{
-			transform.Position.x -= rigidBody.velocity.x * DeltaTime;
+			velocity.x = -speed; 
+			Logger::Log("move_x_left flag");
 		}
 		else if(move_x_right == true)
 		{
-			transform.Position.x += rigidBody.velocity.x * DeltaTime;
+			velocity.x = speed; 
+			Logger::Log("move_x_right flag");
 		}
+		else
+        {
+            velocity.x = 0;
+        }
+
+		b2Body_SetLinearVelocity(rigidBody.body, velocity);
+
+		b2Vec2 rigidbody_pos = b2Body_GetPosition(rigidBody.body);
+		transform.Position.x = rigidbody_pos.x;
+		transform.Position.y = rigidbody_pos.y;
 	}
+
+	
 }
 
 template<typename T>

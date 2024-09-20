@@ -32,9 +32,9 @@ void DamageSystem::Update(float DeltaTime)
 
 void DamageSystem::OnCollision(CollisionEvent& event)
 {
-    Logger::Log("Test Collision event triggered");
-    gCoreHandler->addToRemoveEntity(event.a);
-    gCoreHandler->addToRemoveEntity(event.b);
+    // Logger::Log("Test Collision event triggered");
+    // gCoreHandler->addToRemoveEntity(event.a);
+    // gCoreHandler->addToRemoveEntity(event.b);
 }
 
 template<typename T>

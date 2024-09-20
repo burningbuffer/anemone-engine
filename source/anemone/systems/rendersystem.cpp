@@ -1,5 +1,5 @@
 #include "rendersystem.hpp"
-#include "../components/transformcomponent.hpp"
+#include "../components/rigidbodycomponent.hpp"
 #include "../components/spritecomponent.hpp"
 #include "../window/window.hpp"
 #include "../resourcehandler/resourcehandler.hpp"
@@ -15,7 +15,7 @@ extern std::unique_ptr<ResourceHandler> gResourceHandler;
 
 RenderSystem::RenderSystem()
 {
-    RequireComponent<TransformComponent>();
+    RequireComponent<RigidBodyComponent>();
     RequireComponent<SpriteComponent>();
 }
 
@@ -33,20 +33,24 @@ void RenderSystem::Render()
 {
     for (auto entity : mEntities)
 	{
-		auto& transform = gCoreHandler->GetComponent<TransformComponent>(entity);
+		auto& transform = gCoreHandler->GetComponent<RigidBodyComponent>(entity);
 		const auto sprite = gCoreHandler->GetComponent<SpriteComponent>(entity);
 
         SDL_Rect srcRect = sprite.sourceRect;
 
+        b2Vec2 position = b2Body_GetPosition(transform.body);
+
         SDL_Rect dstRect = 
         {
-            static_cast<int>(transform.Position.x), 
-            static_cast<int>(transform.Position.y), 
-            static_cast<int>(sprite.width * transform.Scale.x), 
-            static_cast<int>(sprite.height * transform.Scale.y) 
+            static_cast<int>(position.x), 
+            static_cast<int>(position.y), 
+            //static_cast<int>(sprite.width * transform.Scale.x), 
+            static_cast<int>(sprite.width), 
+            //static_cast<int>(sprite.height * transform.Scale.y) 
+            static_cast<int>(sprite.height)
         };
 
-        SDL_RenderCopyEx(gWindow->GetRenderer(), gResourceHandler->GetTexture(sprite.textureId), &srcRect, &dstRect, transform.Rotation, NULL, SDL_FLIP_NONE);
+        SDL_RenderCopyEx(gWindow->GetRenderer(), gResourceHandler->GetTexture(sprite.textureId), &srcRect, &dstRect, 0.0f, NULL, SDL_FLIP_NONE);
         
 	}
 }

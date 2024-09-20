@@ -112,6 +112,13 @@ public:
 	}
 
 	template<typename T>
+	bool HasComponent(Entity entity)
+	{
+		// verify if the entity has a component
+		return mComponentHandler->HasComponent<T>(entity);
+	}
+
+	template<typename T>
 	std::shared_ptr<T> CreateSystem()
 	{
 		return mSystemHandler->CreateSystem<T>();
