@@ -7,11 +7,8 @@
 #include <anemone/core/corehandler.hpp>
 #include <anemone/resourcehandler/resourcehandler.hpp>
 #include <anemone/components/components.hpp>
-#include <anemone/systems/movementsystem.hpp>
 #include <anemone/systems/rendersystem.hpp>
-#include <anemone/systems/collisionsystem.hpp>
 #include <anemone/systems/damagesystem.hpp>
-#include <anemone/systems/debugrenderingsystem.hpp>
 #include <anemone/logger/logger.hpp>
 #include <anemone/window/window.hpp>
 #include <anemone/eventhandler/eventhandler.hpp>
@@ -32,11 +29,7 @@ std::unique_ptr<PhysicsHandler> gPhysicsHandler;
 std::unique_ptr<PlayerController> gPlayerController;
 std::shared_ptr<DamageSystem> damageSystem;
 std::shared_ptr<RenderSystem> renderSystem;
-//std::shared_ptr<CollisionSystem> collisionSystem;
 
-//std::shared_ptr<DebugRenderingSystem> debugRenderingSystem;
-
-//b2Vec2 gGravity = {0.0f, +190.0f};
 b2Vec2 gGravity = {0.0f, 0.0f};
 
 b2WorldDef worldDef;
@@ -75,19 +68,15 @@ bool Game::Initialize()
     gCoreHandler->CreateComponent<RigidBodyComponent>();
     gCoreHandler->CreateComponent<SpriteComponent>();
     gCoreHandler->CreateComponent<BoxColliderComponent>();
-    gCoreHandler->CreateComponent<PlayerControllerComponent>();
 
     renderSystem = gCoreHandler->CreateSystem<RenderSystem>();
-    //collisionSystem = gCoreHandler->CreateSystem<CollisionSystem>();
     damageSystem = gCoreHandler->CreateSystem<DamageSystem>();
-    //debugRenderingSystem = gCoreHandler->CreateSystem<DebugRenderingSystem>();
 
     Entity tank = gCoreHandler->CreateEntity();
     gCoreHandler->AddComponent(tank, TransformComponent{glm::vec2{10, 30}});
     gCoreHandler->AddComponent(tank, RigidBodyComponent{});
     gCoreHandler->AddComponent(tank, SpriteComponent{"tank_image", 32, 32});
     gCoreHandler->AddComponent(tank, BoxColliderComponent{glm::vec2{28, 19}, glm::vec2{5, 12}});
-    gCoreHandler->AddComponent(tank, PlayerControllerComponent{});
 
     CreateBody(tank, b2_dynamicBody);
 
@@ -183,8 +172,6 @@ void Game::Update()
 
     damageSystem->Update(deltaTime);
 
-    //debugRenderingSystem->Update(deltaTime);
-
     // Update Objects
 
     gCoreHandler->Update();
@@ -202,8 +189,6 @@ void Game::Render()
     gWindow->RenderClear(222, 222, 222, 255);
 
     renderSystem->Render();
-
-    //debugRenderingSystem->Render();
 
     gWindow->RenderPresent();
 }
