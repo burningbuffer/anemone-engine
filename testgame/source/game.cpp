@@ -18,6 +18,7 @@
 #include <anemone/events/keypressedevent.hpp>
 #include <anemone/events/keyreleasedevent.hpp>
 #include <anemone/physics/physicshandler.hpp>
+#include <anemone/systems/playercontroller.hpp>
 #include <iostream>
 #include <memory>
 #include <box2d/box2d.h>
@@ -28,7 +29,7 @@ std::unique_ptr<ResourceHandler> gResourceHandler;
 std::unique_ptr<EventHandler> gEventHandler;
 std::unique_ptr<PhysicsHandler> gPhysicsHandler;
 
-std::shared_ptr<MovementSystem> movementSystem;
+std::unique_ptr<PlayerController> gPlayerController;
 std::shared_ptr<DamageSystem> damageSystem;
 std::shared_ptr<RenderSystem> renderSystem;
 //std::shared_ptr<CollisionSystem> collisionSystem;
@@ -76,7 +77,6 @@ bool Game::Initialize()
     gCoreHandler->CreateComponent<BoxColliderComponent>();
     gCoreHandler->CreateComponent<PlayerControllerComponent>();
 
-    movementSystem = gCoreHandler->CreateSystem<MovementSystem>();
     renderSystem = gCoreHandler->CreateSystem<RenderSystem>();
     //collisionSystem = gCoreHandler->CreateSystem<CollisionSystem>();
     damageSystem = gCoreHandler->CreateSystem<DamageSystem>();
@@ -90,6 +90,8 @@ bool Game::Initialize()
     gCoreHandler->AddComponent(tank, PlayerControllerComponent{});
 
     CreateBody(tank, b2_dynamicBody);
+
+    gPlayerController = std::make_unique<PlayerController>(tank);
 
     Entity truck = gCoreHandler->CreateEntity();
     gCoreHandler->AddComponent(truck, TransformComponent{glm::vec2{10, 160}});
@@ -169,11 +171,11 @@ void Game::Update()
 
     damageSystem->Subscribe();
 
-    movementSystem->Subscribe();
+    gPlayerController->Subscribe();
 
     // Update Systems
 
-    movementSystem->Update(deltaTime);
+    gPlayerController->Update(deltaTime);
 
     renderSystem->Update(deltaTime);
 
