@@ -7,9 +7,10 @@
 extern std::unique_ptr<CoreHandler> gCoreHandler;
 extern std::unique_ptr<EventHandler> gEventHandler;
 
-PlayerController::PlayerController(Entity entity)
+PlayerController::PlayerController(Entity entity, float speed)
 {
     this->entity = entity;
+    this->speed = speed;
 }
 
 PlayerController::~PlayerController()
@@ -80,12 +81,10 @@ void PlayerController::Update(float DeltaTime)
     if(move_x_left == true)
     {
         velocity.x = -speed; 
-        Logger::Log("move_x_left flag");
     }
     else if(move_x_right == true)
     {
         velocity.x = speed; 
-        Logger::Log("move_x_right flag");
     }
     else
     {

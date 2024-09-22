@@ -6,9 +6,11 @@ Window::~Window(){}
 
 bool Window::CreateWindow(const char *windowName, int w, int h)
 {
-    mWindowName = windowName;
-    mWindowWidth = w;
-    mWindowHeight = h;
+    this->mWindowName = windowName;
+    this->mWindowWidth = w;
+    this->mWindowHeight = h;
+
+    this->mAspectRatio = w / h;
 
     InitSDL();
 

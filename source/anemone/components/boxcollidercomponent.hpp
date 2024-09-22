@@ -9,7 +9,7 @@ struct BoxColliderComponent : ColliderComponent
 
 	b2Polygon boxCollider;
 	b2ShapeDef shapeDef;
-
+	
 	glm::vec2 size;
     glm::vec2 offset;
 };

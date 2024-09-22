@@ -18,6 +18,8 @@ public:
     int mWindowWidth = NULL;
     int mWindowHeight = NULL;
 
+    float mAspectRatio = NULL;
+
 private:
 
     const char* mWindowName = nullptr;

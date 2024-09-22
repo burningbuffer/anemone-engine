@@ -31,12 +31,13 @@ std::shared_ptr<DamageSystem> damageSystem;
 std::shared_ptr<RenderSystem> renderSystem;
 
 b2Vec2 gGravity = {0.0f, 0.0f};
-
 b2WorldDef worldDef;
-
 b2WorldId gWorldId;
-float mTimeStep = 1.0f / 60.0f;
-int mSubStepCount = 8;
+float gTimeStep = 1.0f / 60.0f;
+int gSubStepCount = 8;
+
+int gWindowWidth = 800;
+int gWindowHeight = 800;
 
 Game::Game() {}
 Game::~Game() {}
@@ -48,13 +49,16 @@ bool Game::Initialize()
     gResourceHandler = std::make_unique<ResourceHandler>();
     gEventHandler = std::make_unique<EventHandler>();
     gCoreHandler->Init();
-    isRunning = gWindow->CreateWindow("my game", 800, 600);
+    isRunning = gWindow->CreateWindow("my game", gWindowWidth, gWindowHeight);
 
     if (!isRunning) 
     {
         Logger::Err("Window Creation Failed");
         return false;
     }
+
+    //b2SetLengthUnitsPerMeter(32);
+
 
     worldDef = b2DefaultWorldDef();
     worldDef.gravity = gGravity;
@@ -73,23 +77,32 @@ bool Game::Initialize()
     damageSystem = gCoreHandler->CreateSystem<DamageSystem>();
 
     Entity tank = gCoreHandler->CreateEntity();
-    gCoreHandler->AddComponent(tank, TransformComponent{glm::vec2{10, 30}});
+    gCoreHandler->AddComponent(tank, TransformComponent{glm::vec2{57, 30}});
     gCoreHandler->AddComponent(tank, RigidBodyComponent{});
     gCoreHandler->AddComponent(tank, SpriteComponent{"tank_image", 32, 32});
-    gCoreHandler->AddComponent(tank, BoxColliderComponent{glm::vec2{28, 19}, glm::vec2{5, 12}});
+    gCoreHandler->AddComponent(tank, BoxColliderComponent{glm::vec2{16.0f, 16.0f}, glm::vec2{5, 12}});
 
     CreateBody(tank, b2_dynamicBody);
-
-    gPlayerController = std::make_unique<PlayerController>(tank);
+    
+    gPlayerController = std::make_unique<PlayerController>(tank, 100.0f);
 
     Entity truck = gCoreHandler->CreateEntity();
-    gCoreHandler->AddComponent(truck, TransformComponent{glm::vec2{10, 160}});
+    gCoreHandler->AddComponent(truck, TransformComponent{glm::vec2{30, 160}});
     gCoreHandler->AddComponent(truck, RigidBodyComponent{});
     gCoreHandler->AddComponent(truck, SpriteComponent{"truck_image", 32, 32});
-    gCoreHandler->AddComponent(truck, BoxColliderComponent{glm::vec2{28, 19}, glm::vec2{5, 12}});
+    gCoreHandler->AddComponent(truck, BoxColliderComponent{glm::vec2{16.0f, 16.0f}, glm::vec2{5, 12}});
 
     // CreateBody(truck, b2_staticBody);
     CreateBody(truck, b2_staticBody);
+
+    Entity truck2 = gCoreHandler->CreateEntity();
+    gCoreHandler->AddComponent(truck2, TransformComponent{glm::vec2{130, 270}});
+    gCoreHandler->AddComponent(truck2, RigidBodyComponent{});
+    gCoreHandler->AddComponent(truck2, SpriteComponent{"truck_image", 32, 32});
+    gCoreHandler->AddComponent(truck2, BoxColliderComponent{glm::vec2{16.0f, 16.0f}, glm::vec2{5, 12}});
+
+    // CreateBody(truck, b2_staticBody);
+    CreateBody(truck2, b2_staticBody);
 
     return true;
 }
@@ -99,15 +112,14 @@ void Game::CreateBody(Entity e, b2BodyType bodyType)
     auto& transform = gCoreHandler->GetComponent<TransformComponent>(e);
     auto& rigidbody = gCoreHandler->GetComponent<RigidBodyComponent>(e);
 
-    b2BodyDef bodyDef;
-    bodyDef = b2DefaultBodyDef();
+    b2BodyDef bodyDef = b2DefaultBodyDef();
     bodyDef.type = bodyType;
     bodyDef.position = b2Vec2{transform.Position.x, transform.Position.y};
-    bodyDef.fixedRotation = false;
+    bodyDef.fixedRotation = true;
+    bodyDef.userData = &e;
+    bodyDef.linearDamping = 0.0f;
 
     rigidbody.body = b2CreateBody(gWorldId, &bodyDef);
-
-    b2Body_SetLinearDamping(rigidbody.body, 0.0f);
 
     if(gCoreHandler->HasComponent<BoxColliderComponent>(e))
     {
@@ -147,7 +159,8 @@ void Game::Update()
 {
     int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecsPreviousFrame);
 
-    if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME) {
+    if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME) 
+    {
         SDL_Delay(timeToWait);
     }
 
@@ -181,7 +194,7 @@ void Game::Update()
 
 void Game::UpdateBox2d()
 {
-    b2World_Step(gWorldId, mTimeStep, mSubStepCount);
+    b2World_Step(gWorldId, gTimeStep, gSubStepCount);
 }
 
 void Game::Render() 

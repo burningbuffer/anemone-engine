@@ -8,7 +8,7 @@ class PlayerController
 {
 public:
 
-    PlayerController(Entity entity);
+    PlayerController(Entity entity, float speed);
     ~PlayerController();
 
     void Subscribe();
@@ -28,6 +28,6 @@ private:
 	bool move_x_left = false;
 	bool move_x_right = false;
 
-    float speed = 90.0f;
+    float speed;
 
 };

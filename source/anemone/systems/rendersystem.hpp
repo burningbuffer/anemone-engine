@@ -15,4 +15,6 @@ public:
 
 private:
 
+    float SCALE = 2.0f;
+
 };
