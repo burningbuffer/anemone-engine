@@ -1,7 +1,7 @@
 #pragma once
 #include <GL/glew.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+// #include <SDL2/SDL.h>
+// #include <SDL2/SDL_image.h>
 #include "../window/window.hpp"
 #include <memory>
 #include <string>

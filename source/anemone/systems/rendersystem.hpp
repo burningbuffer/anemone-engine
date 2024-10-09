@@ -16,8 +16,4 @@ public:
 
 private:
 
-    void RenderPolygon(b2ShapeId shape, b2BodyId body);
-
-    float SCALE = 2.0f;
-
 };

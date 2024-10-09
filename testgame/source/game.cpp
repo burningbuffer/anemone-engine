@@ -1,8 +1,4 @@
 #include "game.hpp"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_mixer.h>
 #include <glm/glm.hpp>
 #include <anemone/core/corehandler.hpp>
 #include <anemone/resourcehandler/resourcehandler.hpp>
@@ -87,7 +83,7 @@ bool Game::Initialize()
     Entity truck = gCoreHandler->CreateEntity();
     gCoreHandler->AddComponent(truck, TransformComponent{glm::vec2{130, 160}});
     gCoreHandler->AddComponent(truck, RigidBodyComponent{});
-    gCoreHandler->AddComponent(truck, SpriteComponent{"truck_image", 32, 32});
+    gCoreHandler->AddComponent(truck, SpriteComponent{"truck_image", 64, 64});
     gCoreHandler->AddComponent(truck, BoxColliderComponent{glm::vec2{14.0f, 9.5f}, glm::vec2{1 , 0}});
 
     CreateBody(truck, b2_staticBody);
@@ -133,7 +129,7 @@ void Game::CreateBody(Entity e, b2BodyType bodyType)
         
         b2ShapeDef shapeDef = b2DefaultShapeDef();
         shapeDef.density = 1.0f;
-        shapeDef.friction = 0.0f;// 0.3f;
+        shapeDef.friction = 0.0f;
         shapeDef.restitution = 0.0;
         box_collider.shapeId = b2CreatePolygonShape(rigidbody.body, &shapeDef, &box_collider.boxCollider);
     }
@@ -143,20 +139,6 @@ void Game::CreateBody(Entity e, b2BodyType bodyType)
 
 void Game::ProcessInput() 
 {
-    // SDL_Event sdlEvent;
-    // while (SDL_PollEvent(&sdlEvent)) {
-    //     switch (sdlEvent.type) {
-    //         case SDL_QUIT:
-    //             isRunning = false;
-    //             break;
-    //         case SDL_KEYDOWN:
-    //             if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) isRunning = false;
-    //             gEventHandler->TriggerEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym);
-    //             break;
-    //         case SDL_KEYUP:
-    //             gEventHandler->TriggerEvent<KeyReleasedEvent>(sdlEvent.key.keysym.sym);
-    //     }
-    // }
     if (glfwGetKey(gWindow->GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(gWindow->GetWindow(), true);
 }
