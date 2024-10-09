@@ -1,31 +1,28 @@
 #pragma once
-#include <SDL2/SDL.h>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <box2d/box2d.h>
+#include <iostream>
 
 class Window
 {
 public:
-
     Window();
     ~Window();
 
     bool CreateWindow(const char* windowName, int w, int h);
-    bool InitSDL();
-    SDL_Renderer* GetRenderer();
-    void RenderClear(int r, int g, int b, int a);
+    bool InitGLFW();
+    GLFWwindow* GetWindow();
+    void RenderClear(float r, float g, float b, float a);
     void RenderPresent();
     void DestroyWindow();
 
-    int mWindowWidth = NULL;
-    int mWindowHeight = NULL;
+    int mWindowWidth = 0;
+    int mWindowHeight = 0;
 
-    float mAspectRatio = NULL;
+    float mAspectRatio = 0.0f;
 
 private:
-
     const char* mWindowName = nullptr;
-    SDL_Window* mWindow = NULL;
-    SDL_Renderer* mRenderer = NULL;
-    SDL_Texture* mTexture = NULL;
-    SDL_DisplayMode mDisplayMode;
-
+    GLFWwindow* mWindow = nullptr;
 };

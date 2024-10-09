@@ -13,8 +13,8 @@ public:
 
     void Subscribe();
 
-    void OnKeyPressed(KeyPressedEvent& event);
-	void OnKeyReleased(KeyReleasedEvent& event);
+    void OnKeyPressed(KeyPressedEvent& e);
+	void OnKeyReleased(KeyReleasedEvent& e);
 
     void Update(float DeltaTime);
 

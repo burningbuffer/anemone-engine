@@ -27,11 +27,12 @@ void DamageSystem::Subscribe()
 
 void DamageSystem::Update(float DeltaTime)
 {
-    
+    //gEventHandler->TriggerEvent<CollisionEvent>();
 }
 
 void DamageSystem::OnCollision(CollisionEvent& event)
 {
+
     // Logger::Log("Test Collision event triggered");
     // gCoreHandler->addToRemoveEntity(event.a);
     // gCoreHandler->addToRemoveEntity(event.b);

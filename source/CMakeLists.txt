@@ -7,6 +7,7 @@ file(GLOB HEADERS
 "anemone/core/*.hpp"
 "anemone/eventhandler/*.hpp"
 "anemone/events/*.hpp"
+"anemone/graphics/*.hpp"
 "anemone/logger/*.hpp"
 "anemone/physics/*.hpp"
 "anemone/systems/*.hpp"
@@ -21,6 +22,7 @@ file(GLOB SOURCES
 "anemone/core/*.cpp"
 "anemone/eventhandler/*.cpp"
 "anemone/events/*.cpp"
+"anemone/graphics/*.cpp"
 "anemone/logger/*.cpp"
 "anemone/physics/*.cpp"
 "anemone/systems/*.cpp"
@@ -31,8 +33,10 @@ file(GLOB SOURCES
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 if(WIN32)
-target_link_libraries(${PROJECT_NAME} PUBLIC box2d SDL2 SDL2main SDL2_image SDL2_mixer SDL2_ttf)
+target_link_libraries(${PROJECT_NAME} PUBLIC box2d SDL2 SDL2main SDL2_image SDL2_mixer SDL2_ttf glfw3 glew32s glew32 opengl32)
     target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/deps/includes ${CMAKE_SOURCE_DIR}/deps/includes/glm/glm)
+    target_include_directories(${PROJECT_NAME} PUBLIC deps/includes/glew deps/includes/glfw)
+    #target_include_directories(${PROJECT_NAME} PUBLIC deps/includes/glew/include)
     target_link_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/deps/libs)
 endif(WIN32)
 

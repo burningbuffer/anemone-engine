@@ -8,7 +8,7 @@
 #include <anemone/resourcehandler/resourcehandler.hpp>
 #include <anemone/components/components.hpp>
 #include <anemone/systems/rendersystem.hpp>
-#include <anemone/systems/damagesystem.hpp>
+// #include <anemone/systems/damagesystem.hpp>
 #include <anemone/logger/logger.hpp>
 #include <anemone/window/window.hpp>
 #include <anemone/eventhandler/eventhandler.hpp>
@@ -27,7 +27,7 @@ std::unique_ptr<EventHandler> gEventHandler;
 std::unique_ptr<PhysicsHandler> gPhysicsHandler;
 
 std::unique_ptr<PlayerController> gPlayerController;
-std::shared_ptr<DamageSystem> damageSystem;
+///std::shared_ptr<DamageSystem> damageSystem;
 std::shared_ptr<RenderSystem> renderSystem;
 
 b2Vec2 gGravity = {0.0f, 0.0f};
@@ -37,13 +37,14 @@ float gTimeStep = 1.0f / 60.0f;
 int gSubStepCount = 8;
 
 int gWindowWidth = 800;
-int gWindowHeight = 800;
+int gWindowHeight = 600;
 
 Game::Game() {}
 Game::~Game() {}
 
 bool Game::Initialize() 
 {
+    
     gCoreHandler = std::make_unique<CoreHandler>();
     gWindow = std::make_unique<Window>();
     gResourceHandler = std::make_unique<ResourceHandler>();
@@ -71,7 +72,7 @@ bool Game::Initialize()
     gCoreHandler->CreateComponent<BoxColliderComponent>();
 
     renderSystem = gCoreHandler->CreateSystem<RenderSystem>();
-    damageSystem = gCoreHandler->CreateSystem<DamageSystem>();
+    //damageSystem = gCoreHandler->CreateSystem<DamageSystem>();
 
     Entity tank = gCoreHandler->CreateEntity();
     gCoreHandler->AddComponent(tank, TransformComponent{glm::vec2{157, 30}});
@@ -142,39 +143,35 @@ void Game::CreateBody(Entity e, b2BodyType bodyType)
 
 void Game::ProcessInput() 
 {
-    SDL_Event sdlEvent;
-    while (SDL_PollEvent(&sdlEvent)) {
-        switch (sdlEvent.type) {
-            case SDL_QUIT:
-                isRunning = false;
-                break;
-            case SDL_KEYDOWN:
-                if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) isRunning = false;
-                gEventHandler->TriggerEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym);
-                break;
-            case SDL_KEYUP:
-                gEventHandler->TriggerEvent<KeyReleasedEvent>(sdlEvent.key.keysym.sym);
-        }
-    }
+    // SDL_Event sdlEvent;
+    // while (SDL_PollEvent(&sdlEvent)) {
+    //     switch (sdlEvent.type) {
+    //         case SDL_QUIT:
+    //             isRunning = false;
+    //             break;
+    //         case SDL_KEYDOWN:
+    //             if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) isRunning = false;
+    //             gEventHandler->TriggerEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym);
+    //             break;
+    //         case SDL_KEYUP:
+    //             gEventHandler->TriggerEvent<KeyReleasedEvent>(sdlEvent.key.keysym.sym);
+    //     }
+    // }
+    if (glfwGetKey(gWindow->GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(gWindow->GetWindow(), true);
 }
 
 void Game::Update() 
 {
-    int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecsPreviousFrame);
-
-    if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME) 
-    {
-        SDL_Delay(timeToWait);
-    }
-
-    float deltaTime = (SDL_GetTicks() - millisecsPreviousFrame) / 1000.0;
-    millisecsPreviousFrame = SDL_GetTicks();
+    float currentFrame = static_cast<float>(glfwGetTime());
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
 
     gEventHandler->Clear();
 
     // Subscribe Systems
 
-    damageSystem->Subscribe();
+    //damageSystem->Subscribe();
 
     gPlayerController->Subscribe();
 
@@ -186,7 +183,7 @@ void Game::Update()
 
     //collisionSystem->Update(deltaTime);
 
-    damageSystem->Update(deltaTime);
+    //damageSystem->Update(deltaTime);
 
     // Update Objects
 
@@ -211,7 +208,7 @@ void Game::Render()
 
 void Game::Run() 
 {
-    while (isRunning) 
+    while (!glfwWindowShouldClose(gWindow->GetWindow())) 
     {
         ProcessInput();
         Update();

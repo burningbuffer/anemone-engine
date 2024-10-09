@@ -1,6 +1,7 @@
 #include "window.hpp"
 #include "../logger/logger.hpp"
 
+
 Window::Window(){}
 Window::~Window(){}
 
@@ -10,65 +11,72 @@ bool Window::CreateWindow(const char *windowName, int w, int h)
     this->mWindowWidth = w;
     this->mWindowHeight = h;
 
-    this->mAspectRatio = w / h;
+    this->mAspectRatio = static_cast<float>(w) / h;
 
-    InitSDL();
+    return InitGLFW();
+}
+
+bool Window::InitGLFW()
+{
+    if (!glfwInit())
+    {
+        Logger::Err("Error Initializing GLFW!");
+        return false;
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    mWindow = glfwCreateWindow(mWindowWidth, mWindowHeight, mWindowName, nullptr, nullptr);
+    
+    if (!mWindow)
+    {
+        Logger::Err("Error Creating GLFW Window.");
+        glfwTerminate();
+        return false;
+    }
+
+    glfwMakeContextCurrent(mWindow);
+
+    if (glewInit() != GLEW_OK)
+    {
+        Logger::Err("Error Initializing GLEW.");
+        return false;
+    }
+
+    GLint GLMajorVersion = 0;
+	GLint GLMinorVersion = 0;
+	glGetIntegerv(GL_MAJOR_VERSION, &GLMajorVersion);
+	glGetIntegerv(GL_MINOR_VERSION, &GLMinorVersion);
+	std::cout << "OpenGL Version  : " << GLMajorVersion << "." << GLMinorVersion << std::endl;
+	std::cout << "OpenGL Vendor   : " << glGetString(GL_VENDOR) << std::endl;
+	std::cout << "OpenGL Renderer : " << glGetString(GL_RENDERER) << std::endl;
+	std::cout << "OpenGL Version  : " << glGetString(GL_VERSION) << std::endl;
+	std::cout << "GLSL Version    : " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 
     return true;
 }
 
-bool Window::InitSDL()
+GLFWwindow* Window::GetWindow()
 {
-    if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
-    {
-        Logger::Err("Error Initializing SDL !");
-        return false;
-    }
-
-    // SDL_GetCurrentDisplayMode(0, &mDisplayMode);
-    // WindowWidth = mDisplayMode.w;
-    // WindowHeight = mDisplayMode.h;
-
-    mWindow = SDL_CreateWindow(mWindowName, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWindowWidth, mWindowHeight,0); //SDL_WINDOW_BORDERLESS);
-
-    if(!mWindow)
-    {
-        Logger::Err("Error Creating SDL Window.");
-        return false;
-    }
-
-    mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-    if(!mRenderer)
-    {
-        Logger::Err("Error Creating SDL_Renderer.");
-        return false;
-    }
-
-    // SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
-
-    return true;
+    return mWindow;
 }
 
-SDL_Renderer* Window::GetRenderer()
+void Window::RenderClear(float r, float g, float b, float a)
 {
-    return mRenderer;
-}
-
-void Window::RenderClear(int r, int g, int b, int a)
-{
-    SDL_SetRenderDrawColor(mRenderer, r, g, b, a);
-	SDL_RenderClear(mRenderer);
+    glClearColor(r, g, b, a);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Window::RenderPresent()
 {
-    SDL_RenderPresent(mRenderer);
+    glfwSwapBuffers(mWindow);
+    glfwPollEvents();
 }
 
 void Window::DestroyWindow()
 {
-    SDL_DestroyRenderer(mRenderer);
-    SDL_DestroyWindow(mWindow);
-    SDL_Quit();
+    glfwDestroyWindow(mWindow);
+    glfwTerminate();
 }
